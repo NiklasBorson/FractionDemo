@@ -2,24 +2,27 @@
 {
     static class Program
     {
-        static void Test(Fraction a, Fraction b)
+        static void Test(int an, int ad, int bn, int bd)
         {
-            Console.WriteLine($"{a} * {b} => {a * b}");
-            Console.WriteLine($"{a} / {b} => {a / b}");
-            Console.WriteLine($"{a} + {b} => {a + b}");
-            Console.WriteLine($"{a} - {b} => {a - b}");
-            Console.WriteLine($"{a} == {b} => {a == b}");
-            Console.WriteLine($"{a} < {b} => {a < b}");
+            var a = new Fraction(an, ad);
+            var b = new Fraction(bn, bd);
+
+            Console.WriteLine($"Testing {an}/{ad} and {bn}/{bd}:");
+            Console.WriteLine($"  {a} * {b} => {a * b}");
+            Console.WriteLine($"  {a} / {b} => {a / b}");
+            Console.WriteLine($"  {a} + {b} => {a + b}");
+            Console.WriteLine($"  {a} - {b} => {a - b}");
+            Console.WriteLine($"  {a} == {b} => {a == b}");
+            Console.WriteLine($"  {a} < {b} => {a < b}");
             Console.WriteLine();
         }
 
-
         static void Main()
         {
-            Test(new Fraction(1, 2), new Fraction(1, 2));
-            Test(new Fraction(1, 2), new Fraction(1, 3));
-            Test(new Fraction(3, 12), new Fraction(3, 8));
-            Test(new Fraction(7, 16), new Fraction(3, 8));
+            Test(1, 2, 1, 2);
+            Test(1, 2, 1, 3);
+            Test(3, 1, 3, 8);
+            Test(7, 16, 3, 8);
         }
     }
 }

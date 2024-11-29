@@ -3,9 +3,10 @@
 namespace FractionDemo
 {
     /// <summary>
-    /// Represents a fraction in simplist form, meaning:
+    /// Represents a fraction in simplist form. This means the
+    /// following invariants are guaranteed:
     ///  - Denominator > 0
-    ///  - Simplest form
+    ///  - Numerator and Denominator have no common factors
     ///  - Zero is represented as 0/1
     /// </summary>
     struct Fraction : IComparable<Fraction>
@@ -50,30 +51,37 @@ namespace FractionDemo
             }
         }
 
-        public int Numerator
-        {
-            get;
-        }
+        // Numerator and Denominator properties.
+        // It is not possible to create an invalid fraction because:
+        //  - The constructor establishes class invariants.
+        //  - The properties cannot be set outside the constructor.
+        public int Numerator { get; }
+        public int Denominator { get; }
 
-        public int Denominator
-        {
-            get;
-        }
-
-        public override string ToString() => (Denominator != 1) ?
+        /// <summary>
+        /// Overrides Object.ToString.
+        /// of the fraction.
+        /// </summary>
+        /// <returns>Returns a string representation of the fraction.</returns>
+        public override readonly string ToString() => (Denominator != 1) ?
             $"{Numerator}/{Denominator}" :
             Numerator.ToString();
 
+        /// <summary>
+        /// Overrides Object.Equals.
+        /// </summary>
+        /// <param name="obj">Object to compaer to.</param>
+        /// <returns>Returns true of obj is equal to the fraction, otherwise false.</returns>
         public override bool Equals([NotNullWhen(true)] object? obj)
         {
-            return obj is Fraction && Equals((Fraction)obj);
+            return obj is Fraction && (Fraction)obj == this;
         }
 
-        public bool Equals(Fraction other)
-        {
-            return other.Numerator == Numerator && other.Denominator == Denominator;
-        }
-
+        /// <summary>
+        /// Overrides Object.GetHashCode. Fraction must override GetHashCode
+        /// because it implements Equals to mean value equality.
+        /// </summary>
+        /// <returns>Returns a hash code that corresponds to the value of the fraction.</returns>
         public override int GetHashCode()
         {
             return (Numerator * 1000003) + Denominator;
@@ -99,6 +107,8 @@ namespace FractionDemo
             -b.Numerator, b.Denominator
             );
 
+        // Private method used operator + and operator -.
+        // Returns n1/d1 + n2/d2.
         private static Fraction Add(int n1, int d1, int n2, int d2)
         {
             int d = LeastCommonMultiple(d1, d2);
@@ -109,12 +119,15 @@ namespace FractionDemo
 
         public static bool operator ==(Fraction a, Fraction b)
         {
-            return a.Equals(b);
+            // Because fractions are in standard form, two fractions with
+            // the same value must have the same Numerator and Denominator.
+            return a.Numerator == b.Numerator &&
+                a.Denominator == b.Denominator;
         }
 
         public static bool operator !=(Fraction a, Fraction b)
         {
-            return !a.Equals(b);
+            return !(a == b);
         }
 
         public static bool operator <(Fraction a, Fraction b)
@@ -137,20 +150,27 @@ namespace FractionDemo
             return a.CompareTo(b) >= 0;
         }
 
+        /// <summary>
+        /// Implementation of IComparable.CompareTo.
+        /// </summary>
         public int CompareTo(Fraction other)
         {
             int d = LeastCommonMultiple(Denominator, other.Denominator);
-            int n1 = Numerator * d / Denominator;
-            int n2 = other.Numerator * d / other.Denominator;
+            int n1 = Numerator * (d / Denominator);
+            int n2 = other.Numerator * (d / other.Denominator);
             return n1 - n2;
         }
 
+        // Returns the smallest number that is a multiple of both a and b.
+        // Both parameters are assumed to be positive.
         private static int LeastCommonMultiple(int a, int b)
         {
             int factor = GreatestCommonFactor(a, b);
             return (a / factor) * b;
         }
 
+        // Returns the largest integer that divides evenly into both a and b.
+        // Both parameters are assumed to be positive.
         private static int GreatestCommonFactor(int a, int b)
         {
             int result = 1;
